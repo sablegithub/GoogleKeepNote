@@ -13,7 +13,7 @@ namespace RepositoryLayer.Context
                 : base(options)
             {
             }
-            public DbSet<UserEntity> Employees { get; set; }
+            public DbSet<UserEntity> User { get; set; }
         }
     }
 
