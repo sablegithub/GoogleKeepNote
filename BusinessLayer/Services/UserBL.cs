@@ -12,21 +12,34 @@ namespace BusinessLayer.Services
     {
         private readonly IUserRL userRL;
 
-            public UserBL(IUserRL userRL)
+        public UserBL(IUserRL userRL)
         {
-            this.userRL=userRL;
+            this.userRL = userRL;
         }
 
         public UserEntity Register(UserRegistrationModel userRegistrationModel)
+
         {
             try
             {
                 return userRL.Register(userRegistrationModel);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw ex;
             }
         }
+
+        public bool login(LoginModel loginModel)
+        {
+            try
+            {
+                return userRL.login(loginModel);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }   
     }
 }

@@ -30,7 +30,23 @@ namespace FundooApplication.Controllers
             }
 
         }
-        
+
+        [HttpPost("Login")]
+        public IActionResult login(LoginModel loginModel)
+        {
+           // var result = userBL.login(loginModel);
+            if ( userBL.login(loginModel))
+            {
+                return this.Ok(new { success = true, message = "Login Successful" });
+            }
+            else
+            {
+                return this.BadRequest(new { success = false, message = "Login UnSuccessful" });
+            }
+
+        }
+
+
     }
 
 }
