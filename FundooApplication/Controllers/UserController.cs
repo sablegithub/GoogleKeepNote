@@ -1,7 +1,10 @@
 ﻿using BusinessLayer.Interface;
 using CommonLayer.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using System.Threading.Tasks;
 
 namespace FundooApplication.Controllers
 {
@@ -10,11 +13,13 @@ namespace FundooApplication.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserBL userBL;
-
+   
         public UserController(IUserBL userBL)
         {
             this.userBL = userBL;
         }
+
+        
 
         [HttpPost("Register")]
         public IActionResult Registration(UserRegistrationModel userRegistrationModel)
@@ -34,19 +39,17 @@ namespace FundooApplication.Controllers
         [HttpPost("Login")]
         public IActionResult login(LoginModel loginModel)
         {
-           // var result = userBL.login(loginModel);
-            if ( userBL.login(loginModel))
+            var result = userBL.login(loginModel);
+            if ( result != null)
             {
-                return this.Ok(new { success = true, message = "Login Successful" });
+                return this.Ok(new { success = true, message = "Login Successful",data= result});
             }
             else
             {
-                return this.BadRequest(new { success = false, message = "Login UnSuccessful" });
+                return this.NotFound(new { success = false, message = "Login UnSuccessful" });
             }
-
-        }
-
-
+        }  
+       
     }
 
 }

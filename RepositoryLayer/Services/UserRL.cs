@@ -1,11 +1,16 @@
 ﻿using CommonLayer.Model;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using RepositoryLayer.Context;
 using RepositoryLayer.Entities;
 using RepositoryLayer.Interface;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace RepositoryLayer.Services
 {
@@ -13,10 +18,12 @@ namespace RepositoryLayer.Services
 
     {
         private readonly FundooContext fundooContext;
+        private readonly IConfiguration configuration;
 
-        public UserRL(FundooContext fundooContext)
+        public UserRL(FundooContext fundooContext, IConfiguration configuration)
         {
             this.fundooContext = fundooContext;
+            this.configuration = configuration;
 
         }
 
@@ -48,17 +55,18 @@ namespace RepositoryLayer.Services
             }
         }
 
-        public bool login(LoginModel login)
+        public string login(LoginModel login)
         {
             try
             {
                 UserEntity user = new UserEntity();
-                user = this.fundooContext.User.FirstOrDefault(x => x.Email == login.Email);
+                user = this.fundooContext.User.SingleOrDefault(x => x.Email == login.Email && x.Password == login.Password) ;
                 if (user != null)
                 {
-                    return true;
+                    var token = GenerateSecurityToken(user.Email, user.UserID);
+                    return token ;
                 }
-                return false;
+                return null;
             }
             catch (Exception)
             {
@@ -67,7 +75,27 @@ namespace RepositoryLayer.Services
             }
         }
 
+        public string GenerateSecurityToken(string email ,long id)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(configuration[("jwt:key")]);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new[]
+                {
+                    new Claim(ClaimTypes.Email, email),
+                    new Claim("UserID", id.ToString())
 
+                }),
+                Expires = DateTime.UtcNow.AddHours(1),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
 
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+
+            return tokenHandler.WriteToken(token);
+
+        }
+        
     }
 }

@@ -10,6 +10,6 @@ namespace RepositoryLayer.Interface
     {
         public UserEntity Register(UserRegistrationModel userRegistrationModel);
 
-        public bool login(LoginModel loginModel);
+        public string login(LoginModel loginModel);
     }
 }

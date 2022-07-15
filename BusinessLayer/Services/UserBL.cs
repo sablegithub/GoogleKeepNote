@@ -30,7 +30,7 @@ namespace BusinessLayer.Services
             }
         }
 
-        public bool login(LoginModel loginModel)
+        public string login(LoginModel loginModel)
         {
             try
             {
