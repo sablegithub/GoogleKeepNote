@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Net.Mail;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -109,6 +110,32 @@ namespace RepositoryLayer.Services
             else
             {
                 return null;
+            }
+        }
+
+        public string ResetPassWord(ResetPassword resetPassword)
+        {
+          
+            // var Passcheck = fundooContext.User.SingleOrDefault(x =>x.Password == resetPassword);
+
+            try
+            {
+                if(resetPassword.NewPassword==resetPassword.ConformPassword)
+                {
+                    UserEntity userEntity = fundooContext.User.Where(x => x.Email == resetPassword.Email).FirstOrDefault();
+                    userEntity.Password = resetPassword.ConformPassword;
+                    fundooContext.SaveChanges();
+                    return "Reset Successfully";
+                }
+                else
+                {
+                    return "Reset Failed";
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
             }
         }
     }

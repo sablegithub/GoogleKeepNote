@@ -4,7 +4,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using System.Security.Claims;
 using System.Threading.Tasks;
+
 
 namespace FundooApplication.Controllers
 {
@@ -61,6 +63,24 @@ namespace FundooApplication.Controllers
             else
             {
                 return this.NotFound(new { success = false, message = "Mail Send is  UnSuccessful" });
+            }
+        }
+
+        [Authorize]
+        [HttpPost("Reset")]
+        public IActionResult ResetPassWord(ResetPassword resetPassword)
+        {
+            var email = User.FindFirst(ClaimTypes.Email).Value;
+            var result = userBL.ResetPassWord(resetPassword);
+
+            if (result != null)
+            {
+                return this.Ok(new { success = true, message = "Reset Successfully" });
+            }
+            
+            else
+            {
+                return this.Ok(new { success = false, message = "Reset Failed" });
             }
         }
     }

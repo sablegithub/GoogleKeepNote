@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -40,64 +41,135 @@ namespace FundooApplication
             services.AddControllers();
             services.AddTransient<IUserBL, UserBL>();
             services.AddTransient<IUserRL, UserRL>();
-            services.AddSwaggerGen(swagger =>
+            services.AddMvc();
+
+            // Reset Token Valid for 2 hours 
+            //services.Configure<DataProtectionTokenProviderOptions>(opts => opts.TokenLifespan = TimeSpan.FromHours(2));
+            services.AddSwaggerGen(c =>
             {
-                //This is to generate the Default UI of Swagger Documentation  
-                swagger.SwaggerDoc("v1", new OpenApiInfo
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Welcome to FundooNotes" });
+
+                var securitySchema = new OpenApiSecurityScheme
+
                 {
-                    Version = "v1",
-                    Title = "Fundoo Application",
-                    Description = "ASP.NET Core 3.1 Web API"
-                });
-                // To Enable authorization using Swagger (JWT)  
-                swagger.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
-                {
+
+                    Description = "Using the Authorization header with the Bearer scheme.",
+
                     Name = "Authorization",
-                    Type = SecuritySchemeType.ApiKey,
-                    Scheme = "Bearer",
-                    BearerFormat = "JWT",
+
                     In = ParameterLocation.Header,
-                    Description = "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer 12345abcdef\"",
-                });
-                swagger.AddSecurityRequirement(new OpenApiSecurityRequirement
-                {
+
+                    Type = SecuritySchemeType.Http,
+
+                    Scheme = "bearer",
+
+                    Reference = new OpenApiReference
+
                     {
-                          new OpenApiSecurityScheme
-                            {
-                                Reference = new OpenApiReference
-                                {
-                                    Type = ReferenceType.SecurityScheme,
-                                    Id = "Bearer"
-                                }
-                            },
-                            new string[] {}
+
+                        Type = ReferenceType.SecurityScheme,
+
+                        Id = "Bearer"
 
                     }
-                });
+
+                };
+
+                c.AddSecurityDefinition("Bearer", securitySchema);
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+
+{
+
+{ securitySchema, new[] { "Bearer" } }
+
+});
             });
 
+            //var jwtSection = Configuration.GetSection("Jwt:Key");
             services.AddAuthentication(option =>
             {
                 option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+
                 option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 
             }).AddJwtBearer(options =>
             {
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
+                    ValidateIssuer = false,
+
+                    ValidateAudience = false,
+
                     ValidateLifetime = false,
+
                     ValidateIssuerSigningKey = true,
-                    ValidIssuer = Configuration["Jwt:Issuer"],
-                    ValidAudience = Configuration["Jwt:Issuer"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"])) //Configuration["JwtToken:SecretKey"]  
+
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
+
                 };
+
             });
         }
+            //    services.AddSwaggerGen(swagger =>
+            //    {
+            //            //This is to generate the Default UI of Swagger Documentation  
+            //            swagger.SwaggerDoc("v1", new OpenApiInfo
+            //        {
+            //            Version = "v1",
+            //            Title = "Fundoo Application",
+            //            Description = "ASP.NET Core 3.1 Web API"
+            //        });
+            //            // To Enable authorization using Swagger (JWT)  
+            //            swagger.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+            //        {
+            //            Name = "Authorization",
+            //            Type = SecuritySchemeType.ApiKey,
+            //            Scheme = "Bearer",
+            //            BearerFormat = "JWT",
+            //            In = ParameterLocation.Header,
+            //            Description = "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer 12345abcdef\"",
+            //        });
+            //        swagger.AddSecurityRequirement(new OpenApiSecurityRequirement
+            //        {
+            //                {
+            //                      new OpenApiSecurityScheme
+            //                        {
+            //                            Reference = new OpenApiReference
+            //                            {
+            //                                Type = ReferenceType.SecurityScheme,
+            //                                Id = "Bearer"
+            //                            }
+            //                        },
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+            //                        new string[] {}
+
+            //                }
+            //        });
+            //    });
+
+            //    services.AddAuthentication(option =>
+            //    {
+            //        option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            //        option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+
+            //    }).AddJwtBearer(options =>
+            //    {
+            //        options.TokenValidationParameters = new TokenValidationParameters
+            //        {
+            //            ValidateIssuer = false,
+            //            ValidateAudience = false,
+            //            ValidateLifetime = false,
+            //            ValidateIssuerSigningKey = true,
+            //           // ValidIssuer = Configuration["Jwt:Issuer"],
+            //            //ValidAudience = Configuration["Jwt:Issuer"],
+            //            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"])) //Configuration["JwtToken:SecretKey"]  
+            //            };
+            //    });
+            //}
+
+            // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+            public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             
             if (env.IsDevelopment())
@@ -109,6 +181,7 @@ namespace FundooApplication
             app.UseHttpsRedirection();
 
             app.UseRouting();
+            app.UseAuthentication();
 
             app.UseAuthorization();
         
@@ -116,7 +189,7 @@ namespace FundooApplication
             {
                 endpoints.MapControllers();
             });
-            app.UseAuthentication();
+            
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>
