@@ -38,7 +38,7 @@ namespace RepositoryLayer.Services
                 userEntity.Email = userRegistrationModel.Email;
                 userEntity.Password = userRegistrationModel.Password;
 
-                fundooContext.User.Add(userEntity);
+                fundooContext.UserTable.Add(userEntity);
                 int result = fundooContext.SaveChanges();
                 if (result > 0)
                 {
@@ -61,7 +61,7 @@ namespace RepositoryLayer.Services
             try
             {
                 UserEntity user = new UserEntity();
-                user = this.fundooContext.User.SingleOrDefault(x => x.Email == login.Email && x.Password == login.Password) ;
+                user = this.fundooContext.UserTable.SingleOrDefault(x => x.Email == login.Email && x.Password == login.Password) ;
                 if (user != null)
                 {
                     var token = GenerateSecurityToken(user.Email, user.UserID);
@@ -99,7 +99,7 @@ namespace RepositoryLayer.Services
         }
         public string ForgetPassword(string EmailID)
         {
-            var emailcheck = fundooContext.User.SingleOrDefault(x => x.Email == EmailID);
+            var emailcheck = fundooContext.UserTable.SingleOrDefault(x => x.Email == EmailID);
             if(emailcheck != null)
             {
                 var token=GenerateSecurityToken(emailcheck.Email, emailcheck.UserID);
@@ -122,7 +122,7 @@ namespace RepositoryLayer.Services
             {
                 if(resetPassword.NewPassword==resetPassword.ConformPassword)
                 {
-                    UserEntity userEntity = fundooContext.User.Where(x => x.Email == resetPassword.Email).FirstOrDefault();
+                    UserEntity userEntity = fundooContext.UserTable.Where(x => x.Email == resetPassword.Email).FirstOrDefault();
                     userEntity.Password = resetPassword.ConformPassword;
                     fundooContext.SaveChanges();
                     return "Reset Successfully";
