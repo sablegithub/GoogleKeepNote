@@ -42,8 +42,11 @@ namespace FundooApplication
             services.AddTransient<IUserBL, UserBL>();
             services.AddTransient<IUserRL, UserRL>();
             services.AddMvc();
+
             services.AddTransient<INotesBL,NotesBL>();
             services.AddTransient<INotesRL,NotesRL>();
+
+
 
             // Reset Token Valid for 2 hours 
             //services.Configure<DataProtectionTokenProviderOptions>(opts => opts.TokenLifespan = TimeSpan.FromHours(2));

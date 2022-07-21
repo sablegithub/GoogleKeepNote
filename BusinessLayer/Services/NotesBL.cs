@@ -32,5 +32,43 @@ namespace BusinessLayer.Services
             }
         }
 
+        public string Delete(long NoteID)
+        {
+            try
+            {
+                return notesRL.Delete(NoteID);
+            }
+            catch (Exception )
+            {
+
+                return null;
+            }
+        }
+
+        public IEnumerable<NotesEntity> Retrieve(long NoteID)
+        {
+            try
+            {
+                return notesRL.Retrieve(NoteID);
+            }
+            catch (Exception)
+            {
+
+                return null;
+            }
+        }
+
+        public NotesEntity Update(UpdateModel updateModel, long NoteID)
+        {
+            try
+            {
+                return notesRL.Update(updateModel,NoteID);
+            }
+            catch (Exception)
+            {
+
+                return null ;
+            }
+        }
     }
 }

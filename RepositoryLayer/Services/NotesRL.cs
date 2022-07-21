@@ -4,6 +4,7 @@ using RepositoryLayer.Entities;
 using RepositoryLayer.Interface;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace RepositoryLayer.Services
@@ -52,6 +53,59 @@ namespace RepositoryLayer.Services
             }
         }
 
+        public string Delete(long NoteID)
+        {
+           
+            var result = fundooContext.NotesTable.FirstOrDefault(e => e.NoteID == NoteID);
+            if (result != null)
+            {
+                fundooContext.NotesTable.Remove(result);
+                fundooContext.SaveChanges();
+                return "Notes Delete Successfull";
+            }
+            else
+            {
+                return "Notes Does not Delete";
+            }
+        }
 
+        public IEnumerable<NotesEntity> Retrieve(long NoteID)
+        {
+                var result = fundooContext.NotesTable.SingleOrDefault(e => e.NoteID == NoteID);
+                List<NotesEntity> list = fundooContext.NotesTable.ToList();
+                if (result !=null )
+                {
+                return list;
+                }
+                else
+                {
+                    return null;
+                }
+        }
+
+        public NotesEntity Update(UpdateModel updateModel, long NoteID)
+        {
+            var data= fundooContext.NotesTable.SingleOrDefault(x=>x.NoteID == NoteID);
+            if(data != null)
+            {
+                data.Title = updateModel.Title;
+                data.Discription = updateModel.Discription;
+                data.image = updateModel.image;
+                data.color=updateModel.color;
+                data.remainder=updateModel.remainder;
+                data.createdate=updateModel.createdate;
+                data.modifidedate=updateModel.modifidedate;
+                data.archieve=updateModel.archieve;
+                data.pin = updateModel.pin;
+                data.trash=updateModel.trash;
+                fundooContext.NotesTable.Update(data);
+                fundooContext.SaveChanges();
+                return data ;
+            }
+            else
+            {
+                return null;
+            }
+        }
     }
 }
