@@ -107,5 +107,50 @@ namespace RepositoryLayer.Services
                 return null;
             }
         }
+
+        public NotesEntity Pin(long NoteID)
+        {
+            NotesEntity data = fundooContext.NotesTable.FirstOrDefault (x=>x.NoteID==NoteID);
+            if(data.pin == true)
+            {
+                data.pin=false;
+                
+                fundooContext.SaveChanges();
+                return data;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public NotesEntity Trash(long NoteID)
+        {
+            NotesEntity data = fundooContext.NotesTable.FirstOrDefault(x => x.NoteID == NoteID);
+            if (data.trash == true)
+            {
+                data.trash = false;
+                fundooContext.SaveChanges();
+                return data;
+            }
+            else
+            {
+                return null;
+            }
+        }
+        public NotesEntity Archive(long NoteID)
+        {
+            NotesEntity data = fundooContext.NotesTable.FirstOrDefault(x => x.NoteID == NoteID);
+            if (data.archieve == true)
+            {
+                data.archieve = false;
+                fundooContext.SaveChanges();
+                return data;
+            }
+            else
+            {
+                return null;
+            }
+        }
     }
 }

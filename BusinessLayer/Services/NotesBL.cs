@@ -70,5 +70,42 @@ namespace BusinessLayer.Services
                 return null ;
             }
         }
+        public NotesEntity Pin(long NoteID)
+        {
+            try
+            {
+                return notesRL.Pin(NoteID);
+            }
+            catch (Exception)
+            {
+
+                return null;
+            }
+        }
+        public NotesEntity Trash(long NoteID)
+        {
+            try
+            {
+                return notesRL.Trash(NoteID);
+            }
+            catch (Exception)
+            {
+
+                return null;
+            }
+        }
+
+        public NotesEntity Archive(long NoteID)
+        {
+            try
+            {
+                return notesRL.Archive(NoteID);
+            }
+            catch (Exception)
+            {
+
+                return null;
+            }
+        }
     }
 }

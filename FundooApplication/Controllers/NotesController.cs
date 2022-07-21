@@ -75,9 +75,53 @@ namespace FundooApplication.Controllers
             }
             else
             {
-                return this.NotFound(new { success = false, message = "Data NotUpdated" });
+                return this.NotFound(new { success = false, message = "Data Not Updated" });
             }
         }
-    
+
+        [HttpPut("Pin")]
+        public IActionResult Pin(long NoteID)
+        {
+            long id = Convert.ToInt32(User.Claims.All(x => x.Type == "UserID"));
+            var result=noteBL.Pin(NoteID);
+            if( result != null)
+            {
+                return Ok(new { success = true, message = "Pin Data Successful", data = result });
+            }
+            else
+            {
+                return this.NotFound(new { success = false, message = "Pin Data UnSuccessful" });
+            }
+        
+        }
+        [HttpPut("trash")]
+        public IActionResult Trash(long NoteID)
+        {
+            long id = Convert.ToInt32(User.Claims.All(x => x.Type == "UserID"));
+            var result = noteBL.Trash(NoteID);
+            if (result != null)
+            {
+                return Ok(new { success = true, message = "Trash Data Successful", data = result });
+            }
+            else
+            {
+                return this.NotFound(new { success = false, message = "Trash Data UnSuccessful" });
+            }
+        }
+        [HttpPut("Archive")]
+        public IActionResult Archive(long NoteID)
+        {
+            long id = Convert.ToInt32(User.Claims.All(x => x.Type == "UserID"));
+            var result = noteBL.Archive(NoteID);
+            if (result != null)
+            {
+                return Ok(new { success = true, message = "Archive Data Successful",data=result });
+            }
+            else
+            {
+                return this.NotFound(new { success = false, message = "Archive Data UnSuccessful" });
+            }
+        }
+
     }
 }
