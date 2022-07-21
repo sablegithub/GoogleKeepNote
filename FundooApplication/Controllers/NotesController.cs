@@ -123,5 +123,22 @@ namespace FundooApplication.Controllers
             }
         }
 
+
+        [HttpPost("Upload")]
+        public IActionResult Image(long NoteID,IFormFile img)
+        {
+            long id = Convert.ToInt32(User.Claims.All(x => x.Type == "UserID"));
+            var result = noteBL.Image(NoteID,img);
+            if (result != null)
+            {
+                return Ok(new { success = true, message = "image Upload Successful", data = result });
+            }
+            else
+            {
+                return this.NotFound(new { success = false, message = "image upload UnSuccessful" });
+            }
+
+        }
+
     }
 }

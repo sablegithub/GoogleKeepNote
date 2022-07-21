@@ -1,4 +1,8 @@
-﻿using CommonLayer.Model;
+﻿using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
+using CommonLayer.Model;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using RepositoryLayer.Context;
 using RepositoryLayer.Entities;
 using RepositoryLayer.Interface;
@@ -12,7 +16,11 @@ namespace RepositoryLayer.Services
     public class NotesRL : INotesRL
     {
         private readonly FundooContext fundooContext;
-
+        private readonly IConfiguration configuration;
+        public const string CLOUD_NAME = "dgb6b1laf";
+        public const string API_KEY= "195912455371571";
+        public const string   API_Secret= "_RRp6M_qVXzJmLKi5GFrABto1AM";
+        public static Cloudinary cloud;
         public NotesRL(FundooContext fundooContext)
         {
             this.fundooContext = fundooContext;
@@ -150,6 +158,38 @@ namespace RepositoryLayer.Services
             else
             {
                 return null;
+            }
+        }
+
+        public NotesEntity Image(long NoteID, IFormFile img)
+        {
+            try
+            {
+                var data = fundooContext.NotesTable.FirstOrDefault(x => x.NoteID == NoteID);
+                if(data !=null)
+                {
+                    Account acc = new Account(CLOUD_NAME, API_KEY, API_Secret);
+                    cloud = new Cloudinary(acc);
+                    var imagepath = img.OpenReadStream();
+                    var uploadparams = new ImageUploadParams()
+                    {
+                        File = new FileDescription(img.FileName, imagepath)
+                    };
+                    var uploadresult = cloud.Upload(uploadparams);
+                    data.image = img.FileName;
+                    fundooContext.NotesTable.Update(data);
+                    int upload = fundooContext.SaveChanges();
+                    if(upload>0)
+                    {
+                        return data;
+                    }
+                }
+                return null;
+            }
+            catch (Exception)
+            {
+
+                 throw;
             }
         }
     }
