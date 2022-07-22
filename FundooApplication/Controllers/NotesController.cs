@@ -49,7 +49,7 @@ namespace FundooApplication.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpGet("ID")]
         public IActionResult Retrieve(long NoteID)
         {
             long ID = Convert.ToInt32(User.Claims.All(x => x.Type == "UserID"));
@@ -61,6 +61,20 @@ namespace FundooApplication.Controllers
             else
             {
                 return this.NotFound(new { success = false, message = "data not Reterieve" });
+            }
+        }
+        [HttpGet("Retrieve All")]
+        public IActionResult GetNotes()
+        {
+            // public IEnumerable<NotesEntity> GetNotess()
+            var result = noteBL.GetNotess();
+            if (result != null)
+            {
+                return this.Ok(new { success = true, message = "Retrieve Successful", data=result});
+            }
+            else
+            {
+                return this.NotFound(new { success = false, message = "Notes is not Retrieve" });
             }
         }
 

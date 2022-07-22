@@ -15,6 +15,8 @@ namespace RepositoryLayer.Interface
 
         public IEnumerable<NotesEntity> Retrieve(long NoteID);
 
+        public IEnumerable<NotesEntity> GetNotess();
+
         public NotesEntity Update(UpdateModel updateModel, long NoteID);
 
         public NotesEntity Pin(long NoteID);

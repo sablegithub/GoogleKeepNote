@@ -16,10 +16,10 @@ namespace RepositoryLayer.Services
     public class NotesRL : INotesRL
     {
         private readonly FundooContext fundooContext;
-        private readonly IConfiguration configuration;
+        // private readonly IConfiguration configuration;
         public const string CLOUD_NAME = "dgb6b1laf";
-        public const string API_KEY= "195912455371571";
-        public const string   API_Secret= "_RRp6M_qVXzJmLKi5GFrABto1AM";
+        public const string API_KEY = "195912455371571";
+        public const string API_Secret = "_RRp6M_qVXzJmLKi5GFrABto1AM";
         public static Cloudinary cloud;
         public NotesRL(FundooContext fundooContext)
         {
@@ -60,10 +60,9 @@ namespace RepositoryLayer.Services
                 throw;
             }
         }
-
         public string Delete(long NoteID)
         {
-           
+
             var result = fundooContext.NotesTable.FirstOrDefault(e => e.NoteID == NoteID);
             if (result != null)
             {
@@ -79,36 +78,40 @@ namespace RepositoryLayer.Services
 
         public IEnumerable<NotesEntity> Retrieve(long NoteID)
         {
-                var result = fundooContext.NotesTable.SingleOrDefault(e => e.NoteID == NoteID);
-                List<NotesEntity> list = fundooContext.NotesTable.ToList();
-                if (result !=null )
-                {
+            var result = fundooContext.NotesTable.SingleOrDefault(e => e.NoteID == NoteID);
+            List<NotesEntity> list = fundooContext.NotesTable.ToList();
+            if (result != null)
+            {
                 return list;
-                }
-                else
-                {
-                    return null;
-                }
+            }
+            else
+            {
+                return null;
+            }
         }
 
+        public IEnumerable<NotesEntity> GetNotess()
+        {
+            return fundooContext.NotesTable.ToList();
+        }
         public NotesEntity Update(UpdateModel updateModel, long NoteID)
         {
-            var data= fundooContext.NotesTable.SingleOrDefault(x=>x.NoteID == NoteID);
-            if(data != null)
+            var data = fundooContext.NotesTable.SingleOrDefault(x => x.NoteID == NoteID);
+            if (data != null)
             {
                 data.Title = updateModel.Title;
                 data.Discription = updateModel.Discription;
                 data.image = updateModel.image;
-                data.color=updateModel.color;
-                data.remainder=updateModel.remainder;
-                data.createdate=updateModel.createdate;
-                data.modifidedate=updateModel.modifidedate;
-                data.archieve=updateModel.archieve;
+                data.color = updateModel.color;
+                data.remainder = updateModel.remainder;
+                data.createdate = updateModel.createdate;
+                data.modifidedate = updateModel.modifidedate;
+                data.archieve = updateModel.archieve;
                 data.pin = updateModel.pin;
-                data.trash=updateModel.trash;
+                data.trash = updateModel.trash;
                 fundooContext.NotesTable.Update(data);
                 fundooContext.SaveChanges();
-                return data ;
+                return data;
             }
             else
             {
@@ -118,11 +121,11 @@ namespace RepositoryLayer.Services
 
         public NotesEntity Pin(long NoteID)
         {
-            NotesEntity data = fundooContext.NotesTable.FirstOrDefault (x=>x.NoteID==NoteID);
-            if(data.pin == true)
+            NotesEntity data = fundooContext.NotesTable.FirstOrDefault(x => x.NoteID == NoteID);
+            if (data.pin == true)
             {
-                data.pin=false;
-                
+                data.pin = false;
+
                 fundooContext.SaveChanges();
                 return data;
             }
@@ -166,7 +169,7 @@ namespace RepositoryLayer.Services
             try
             {
                 var data = fundooContext.NotesTable.FirstOrDefault(x => x.NoteID == NoteID);
-                if(data !=null)
+                if (data != null)
                 {
                     Account acc = new Account(CLOUD_NAME, API_KEY, API_Secret);
                     cloud = new Cloudinary(acc);
@@ -179,7 +182,7 @@ namespace RepositoryLayer.Services
                     data.image = img.FileName;
                     fundooContext.NotesTable.Update(data);
                     int upload = fundooContext.SaveChanges();
-                    if(upload>0)
+                    if (upload > 0)
                     {
                         return data;
                     }
@@ -189,8 +192,9 @@ namespace RepositoryLayer.Services
             catch (Exception)
             {
 
-                 throw;
+                throw;
             }
         }
     }
 }
+

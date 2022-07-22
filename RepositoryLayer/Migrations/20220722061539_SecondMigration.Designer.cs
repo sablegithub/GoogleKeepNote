@@ -10,8 +10,8 @@ using RepositoryLayer.Context;
 namespace RepositoryLayer.Migrations
 {
     [DbContext(typeof(FundooContext))]
-    [Migration("20220720062212_FirstMigration")]
-    partial class FirstMigration
+    [Migration("20220722061539_SecondMigration")]
+    partial class SecondMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -20,6 +20,56 @@ namespace RepositoryLayer.Migrations
                 .HasAnnotation("ProductVersion", "3.1.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+            modelBuilder.Entity("RepositoryLayer.Entities.CollabEntity", b =>
+                {
+                    b.Property<long>("CollabID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("EmailID")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("NoteID")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("UserID")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("CollabID");
+
+                    b.HasIndex("NoteID");
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("CollabTable");
+                });
+
+            modelBuilder.Entity("RepositoryLayer.Entities.LabelEntity", b =>
+                {
+                    b.Property<long>("LabelID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("LabelName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("NoteID")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("UserID")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("LabelID");
+
+                    b.HasIndex("NoteID");
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("LabelTable");
+                });
 
             modelBuilder.Entity("RepositoryLayer.Entities.NotesEntity", b =>
                 {
@@ -90,6 +140,36 @@ namespace RepositoryLayer.Migrations
                     b.HasKey("UserID");
 
                     b.ToTable("UserTable");
+                });
+
+            modelBuilder.Entity("RepositoryLayer.Entities.CollabEntity", b =>
+                {
+                    b.HasOne("RepositoryLayer.Entities.NotesEntity", "Note")
+                        .WithMany()
+                        .HasForeignKey("NoteID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("RepositoryLayer.Entities.UserEntity", "User")
+                        .WithMany()
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("RepositoryLayer.Entities.LabelEntity", b =>
+                {
+                    b.HasOne("RepositoryLayer.Entities.NotesEntity", "Note")
+                        .WithMany()
+                        .HasForeignKey("NoteID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("RepositoryLayer.Entities.UserEntity", "User")
+                        .WithMany()
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("RepositoryLayer.Entities.NotesEntity", b =>

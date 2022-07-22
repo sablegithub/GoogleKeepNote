@@ -49,8 +49,45 @@ namespace RepositoryLayer.Migrations
                         column: x => x.UserID,
                         principalTable: "UserTable",
                         principalColumn: "UserID",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                 });
+
+            migrationBuilder.CreateTable(
+                name: "CollabTable",
+                columns: table => new
+                {
+                    CollabID = table.Column<long>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    EmailID = table.Column<string>(nullable: true),
+                    UserID = table.Column<long>(nullable: false),
+                    NoteID = table.Column<long>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CollabTable", x => x.CollabID);
+                    table.ForeignKey(
+                        name: "FK_CollabTable_NotesTable_NoteID",
+                        column: x => x.NoteID,
+                        principalTable: "NotesTable",
+                        principalColumn: "NoteID",
+                        onDelete: ReferentialAction.NoAction);
+                    table.ForeignKey(
+                        name: "FK_CollabTable_UserTable_UserID",
+                        column: x => x.UserID,
+                        principalTable: "UserTable",
+                        principalColumn: "UserID",
+                        onDelete: ReferentialAction.NoAction);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CollabTable_NoteID",
+                table: "CollabTable",
+                column: "NoteID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CollabTable_UserID",
+                table: "CollabTable",
+                column: "UserID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_NotesTable_UserID",
@@ -60,6 +97,9 @@ namespace RepositoryLayer.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "CollabTable");
+
             migrationBuilder.DropTable(
                 name: "NotesTable");
 

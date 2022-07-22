@@ -59,6 +59,19 @@ namespace BusinessLayer.Services
             }
         }
 
+        public IEnumerable<NotesEntity> GetNotess()
+        {
+            try
+            {
+                return notesRL.GetNotess();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public NotesEntity Update(UpdateModel updateModel, long NoteID)
         {
             try
