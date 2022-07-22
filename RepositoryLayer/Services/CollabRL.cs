@@ -49,10 +49,10 @@ namespace RepositoryLayer.Services
             return fundooContext.CollabTable.ToList();
         }
 
-        public String Delete(long NoteID)
+        public String Delete(long CallbID)
         {
 
-            var result = fundooContext.CollabTable.FirstOrDefault(e => e.NoteID == NoteID);
+            var result = fundooContext.CollabTable.FirstOrDefault(e => e.NoteID == CallbID);
             if (result != null)
             {
                 fundooContext.CollabTable.Remove(result);

@@ -81,7 +81,7 @@ namespace FundooApplication.Controllers
         [HttpPut("Update")]
         public IActionResult Update(UpdateModel updateModel, long NoteID)
         {
-            long ID = Convert.ToInt32(User.Claims.All(x => x.Type == "UserID"));
+            long ID = Convert.ToInt32(User.FindFirst(x => x.Type == "UserID").Value);
             var result=noteBL.Update( updateModel,NoteID);
             if(result != null)
             {

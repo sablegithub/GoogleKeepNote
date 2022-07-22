@@ -49,6 +49,9 @@ namespace FundooApplication
             services.AddTransient<ICollabBL,CollabBL>();
             services.AddTransient<ICollabRL,CollabRL>();
 
+            services.AddTransient<ILabelBL,LabelBL>();
+            services.AddTransient<ILabelRL,LabelRL>();  
+
 
 
             // Reset Token Valid for 2 hours 

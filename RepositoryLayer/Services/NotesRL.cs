@@ -94,6 +94,7 @@ namespace RepositoryLayer.Services
         {
             return fundooContext.NotesTable.ToList();
         }
+
         public NotesEntity Update(UpdateModel updateModel, long NoteID)
         {
             var data = fundooContext.NotesTable.SingleOrDefault(x => x.NoteID == NoteID);
