@@ -2,8 +2,16 @@
 using CommonLayer.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Caching.Memory;
+using Newtonsoft.Json;
+using RepositoryLayer.Context;
+using RepositoryLayer.Entities;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace FundooApplication.Controllers
 {
@@ -12,10 +20,14 @@ namespace FundooApplication.Controllers
     public class LabelController : ControllerBase
     {
         private readonly ILabelBL labelBL;
+        private readonly IMemoryCache memoryCache;
+        private readonly IDistributedCache distributedCache;
 
-        public LabelController(ILabelBL labelBL)
+        public LabelController(ILabelBL labelBL,IMemoryCache memoryCache,IDistributedCache distributedCache)
         {
-            this.labelBL = labelBL; 
+            this.labelBL = labelBL;
+            this.memoryCache = memoryCache;
+            this.distributedCache = distributedCache;
         }
 
 
@@ -62,7 +74,7 @@ namespace FundooApplication.Controllers
             }
         }
 
-        [HttpGet("Retrieve All")]
+        [HttpGet("All")]
         public IActionResult GetNotes()
         {
             // public IEnumerable<NotesEntity> GetNotess()
@@ -75,6 +87,30 @@ namespace FundooApplication.Controllers
             {
                 return this.NotFound(new { success = false, message = "Notes is not Retrieve" });
             }
+        }
+        [HttpGet("redis")]
+        public async Task<IActionResult> GetAllCustomersUsingRedisCache()
+        {
+            var cacheKey = "labelList";
+            string serializedlabelList;
+            var labelList = new List<LabelEntity>();
+            var redislabelList = await distributedCache.GetAsync(cacheKey);
+            if (redislabelList != null)
+            {
+                serializedlabelList = Encoding.UTF8.GetString(redislabelList);
+                labelList = JsonConvert.DeserializeObject<List<LabelEntity>>(serializedlabelList);
+            }
+            else
+            {
+                labelList = (List<LabelEntity>)labelBL.GetLables();
+                serializedlabelList = JsonConvert.SerializeObject(labelList);
+                redislabelList = Encoding.UTF8.GetBytes(serializedlabelList);
+                var options = new DistributedCacheEntryOptions()
+                    .SetAbsoluteExpiration(DateTime.Now.AddMinutes(10))
+                    .SetSlidingExpiration(TimeSpan.FromMinutes(2));
+                await distributedCache.SetAsync(cacheKey, redislabelList, options);
+            }
+            return Ok(labelList);
         }
 
 

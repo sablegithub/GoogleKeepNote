@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System.Security.Claims;
-using System.Threading.Tasks;
 
 
 namespace FundooApplication.Controllers
@@ -15,10 +14,12 @@ namespace FundooApplication.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserBL userBL;
-   
-        public UserController(IUserBL userBL)
+       
+
+        public UserController(IUserBL userBL,)
         {
             this.userBL = userBL;
+            
         }
 
         
@@ -80,7 +81,7 @@ namespace FundooApplication.Controllers
             
             else
             {
-                return this.Ok(new { success = false, message = "Reset Failed" });
+                return this.Unauthorized(new { success = false, message = "Reset Failed" });
             }
         }
     }
