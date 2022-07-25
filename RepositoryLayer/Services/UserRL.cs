@@ -59,23 +59,7 @@ namespace RepositoryLayer.Services
             }
         }
 
-        public static string key = "adef@@kfxcbv@";
-
-        public static string convertoencrypt(string password)
-        {
-            if (string.IsNullOrEmpty(password)) return "";
-            password += key;
-            var passwordBytes = Encoding.UTF8.GetBytes(password);
-            return Convert.ToBase64String(passwordBytes);
-        }
-        public static string convertoDecrypt(string base64EncodeData)
-        {
-            if (string.IsNullOrEmpty(base64EncodeData)) return "";
-            var base32EncodeBytes = Convert.FromBase64String(base64EncodeData);
-            var result = Encoding.UTF8.GetString(base32EncodeBytes);
-            result = result.Substring(0, result.Length - key.Length);
-            return result;
-        }
+      
         public string login(LoginModel login)
         {
             try
@@ -96,6 +80,24 @@ namespace RepositoryLayer.Services
                 throw;
             }
         }
+
+        public static string key = "adef@@kfxcbv@";
+        public static string convertoencrypt(string password)
+        {
+            if (string.IsNullOrEmpty(password)) return "";
+            password += key;
+            var passwordBytes = Encoding.UTF8.GetBytes(password);
+            return Convert.ToBase64String(passwordBytes);
+        }
+        public static string convertoDecrypt(string base64EncodeData)
+        {
+            if (string.IsNullOrEmpty(base64EncodeData)) return "";
+            var base32EncodeBytes = Convert.FromBase64String(base64EncodeData);
+            var result = Encoding.UTF8.GetString(base32EncodeBytes);
+            result = result.Substring(0, result.Length - key.Length);
+            return result;
+        }
+
 
         public string GenerateSecurityToken(string email, long id)
         {
