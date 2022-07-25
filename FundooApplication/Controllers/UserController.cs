@@ -16,14 +16,12 @@ namespace FundooApplication.Controllers
         private readonly IUserBL userBL;
        
 
-        public UserController(IUserBL userBL,)
+        public UserController(IUserBL userBL)
         {
             this.userBL = userBL;
             
         }
-
-        
-
+       
         [HttpPost("Register")]
         public IActionResult Registration(UserRegistrationModel userRegistrationModel)
         {

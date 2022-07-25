@@ -50,8 +50,8 @@ namespace FundooApplication
             services.AddTransient<ICollabRL,CollabRL>();
 
             services.AddTransient<ILabelBL,LabelBL>();
-            services.AddTransient<ILabelRL,LabelRL>();  
-
+            services.AddTransient<ILabelRL,LabelRL>();
+          
 
 
             // Reset Token Valid for 2 hours 
@@ -90,11 +90,11 @@ namespace FundooApplication
 
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement
 
-{
+                    {
 
-{ securitySchema, new[] { "Bearer" } }
+                    { securitySchema, new[] { "Bearer" } }
 
-});
+                });
             });
 
             //var jwtSection = Configuration.GetSection("Jwt:Key");
