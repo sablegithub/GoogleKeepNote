@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using RepositoryLayer.Entities;
 using System;
@@ -21,12 +22,16 @@ namespace FundooApplication.Controllers
         private readonly INotesBL noteBL;
         private readonly IMemoryCache memoryCache;
         private readonly IDistributedCache distributedCache;
+        
 
-        public NotesController(INotesBL noteBL, IMemoryCache memoryCache, IDistributedCache distributedCache)
+
+
+        public NotesController(INotesBL noteBL, IMemoryCache memoryCache, IDistributedCache distributedCache, ILogger<NotesController> logger)
         {
             this.noteBL = noteBL;
             this.memoryCache = memoryCache;
             this.distributedCache = distributedCache;
+            //this.logger = logger;
         }
 
 
@@ -63,10 +68,12 @@ namespace FundooApplication.Controllers
         [HttpGet("ID")]
         public IActionResult Retrieve(long NoteID)
         {
+           // logger.LogDebug("Get by id method executing..");
             long ID = Convert.ToInt32(User.Claims.All(x => x.Type == "UserID"));
             var result = noteBL.Retrieve(NoteID);
             if (result != null)
             {
+//logger.LogWarning( "Notes With ID{NoteID} Not Found");
                 return this.Ok(new { success = true, message = "data Reterieve Successful", data = result });
             }
             else
@@ -77,10 +84,12 @@ namespace FundooApplication.Controllers
         [HttpGet("All")]
         public IActionResult GetNotes()
         {
+            //logger.LogInformation("Getting all Notes");
             // public IEnumerable<NotesEntity> GetNotess()
             var result = noteBL.GetNotess();
             if (result != null)
             {
+                
                 return this.Ok(new { success = true, message = "Retrieve Successful", data=result});
             }
             else

@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using System;
 using System.Security.Claims;
 
 
@@ -14,25 +16,36 @@ namespace FundooApplication.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserBL userBL;
-       
-
-        public UserController(IUserBL userBL)
+        private readonly ILogger<UserController> logger;
+        public UserController(IUserBL userBL, ILogger<UserController> logger)
         {
             this.userBL = userBL;
+            this.logger = logger;
             
         }
        
         [HttpPost("Register")]
         public IActionResult Registration(UserRegistrationModel userRegistrationModel)
         {
-            var result = userBL.Register(userRegistrationModel);
-            if(result != null )
+            try
             {
-                return this.Ok(new { success = true, message = "Registration Successful", data = result });
+                var result = userBL.Register(userRegistrationModel);
+                if (result != null)
+                {
+                    return this.Ok(new { success = true, message = "Registration Successful", data = result });
+                }
+                else
+                {
+                   // throw new Exception("Error Occured");
+                    return this.BadRequest(new { success = false, message = "Registration UnSuccessful" });
+                }
+                
             }
-            else
+            catch(Exception ex)
             {
-                return this.BadRequest(new { success = false, message = "Registration UnSuccessful" });
+                 logger.LogError(ex.ToString());
+                 return BadRequest(ex.ToString());
+               
             }
 
         }

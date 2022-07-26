@@ -13,11 +13,13 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using NLog;
 using RepositoryLayer.Context;
 using RepositoryLayer.Interface;
 using RepositoryLayer.Services;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -51,9 +53,8 @@ namespace FundooApplication
 
             services.AddTransient<ILabelBL,LabelBL>();
             services.AddTransient<ILabelRL,LabelRL>();
-          
 
-
+           // services.AddSingleton<ILoggerManager, LoggerManager>();
             // Reset Token Valid for 2 hours 
             //services.Configure<DataProtectionTokenProviderOptions>(opts => opts.TokenLifespan = TimeSpan.FromHours(2));
             services.AddSwaggerGen(c =>
@@ -185,32 +186,35 @@ namespace FundooApplication
 
             // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
             public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-        {
+            {
+
+         //   LogManager.LoadConfiguration(String.Concat(Directory.GetCurrentDirectory(), "/nlog.config"));
             
+
             if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
+               {
+                 app.UseDeveloperExceptionPage();
                 
-            }
+               }
 
-            app.UseHttpsRedirection();
+                 app.UseHttpsRedirection();
 
-            app.UseRouting();
-            app.UseAuthentication();
+                 app.UseRouting();
+                 app.UseAuthentication();
 
-            app.UseAuthorization();
+                 app.UseAuthorization();
         
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
+                 app.UseEndpoints(endpoints =>
+                 {
+                   endpoints.MapControllers();
+                 });
             
 
-            app.UseSwagger();
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/Swagger/v1/swagger.json", "My API v1");
-            });
-        }
+                 app.UseSwagger();
+                 app.UseSwaggerUI(c =>
+                 {
+                    c.SwaggerEndpoint("/Swagger/v1/swagger.json", "My API v1");
+                 });
+            }
     }
 }
